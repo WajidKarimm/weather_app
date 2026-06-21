@@ -1,47 +1,41 @@
-export default function Header() {
+export default function AppShell() {
   return (
-    <header className="app-header">
-      <div className="header-content">
+    <header className="app-status-bar">
+      <div className="status-left">
+        <span className="app-logo" aria-hidden="true">☁</span>
         <div>
-          <h1>Weather App</h1>
-          <p className="author">Built by <strong>Wajid Karim</strong></p>
+          <h1>Weather</h1>
+          <p className="app-author">Wajid Karim</p>
         </div>
-        <p className="tagline">Real-time weather for your location or anywhere you plan to travel</p>
       </div>
+      <time className="status-time">
+        {new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+      </time>
     </header>
   );
 }
 
-export function AboutSection() {
-  return (
-    <section className="about-section card" aria-label="About PM Accelerator">
-      <h3>About PM Accelerator</h3>
-      <p>
-        <strong>Product Manager Accelerator (PM Accelerator)</strong> is a career development program
-        that helps aspiring and early-career product managers build the skills, portfolio, and network
-        needed to break into and excel in product management. The program combines hands-on projects,
-        mentorship from industry professionals, and real-world experience to prepare candidates for
-        PM roles at top companies.
-      </p>
-      <p>
-        Learn more on{' '}
-        <a
-          href="https://www.linkedin.com/company/product-manager-accelerator"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          LinkedIn — Product Manager Accelerator
-        </a>
-      </p>
-    </section>
-  );
-}
+export function BottomNav({ active, onChange }) {
+  const tabs = [
+    { id: 'home', label: 'Home', icon: '🏠' },
+    { id: 'saved', label: 'Saved', icon: '📋' },
+    { id: 'about', label: 'About', icon: 'ℹ️' },
+  ];
 
-export function Footer() {
   return (
-    <footer className="app-footer">
-      <p>Weather data from <a href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">Open-Meteo</a> · Maps via OpenStreetMap</p>
-      <p>© 2026 Wajid Karim — PM Accelerator Technical Assessment</p>
-    </footer>
+    <nav className="bottom-nav" aria-label="Main navigation">
+      {tabs.map((t) => (
+        <button
+          key={t.id}
+          type="button"
+          className={`nav-item ${active === t.id ? 'active' : ''}`}
+          onClick={() => onChange(t.id)}
+          aria-current={active === t.id ? 'page' : undefined}
+        >
+          <span className="nav-icon" aria-hidden="true">{t.icon}</span>
+          <span className="nav-label">{t.label}</span>
+        </button>
+      ))}
+    </nav>
   );
 }

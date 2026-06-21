@@ -1,12 +1,14 @@
 import { useState, useCallback } from 'react';
-import Header, { AboutSection, Footer } from './components/Layout';
+import AppShell, { BottomNav } from './components/Layout';
 import SearchBar, { ErrorAlert } from './components/SearchBar';
 import CurrentWeather, { Forecast, MapEmbed } from './components/WeatherDisplay';
 import RecordsPanel from './components/RecordsPanel';
+import AboutSection from './components/AboutSection';
 import { fetchCurrentWeather, fetchCurrentWeatherByCoords } from './api';
 import './index.css';
 
 export default function App() {
+  const [tab, setTab] = useState('home');
   const [location, setLocation] = useState('');
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -46,7 +48,7 @@ export default function App() {
         try {
           const data = await fetchCurrentWeatherByCoords(pos.coords.latitude, pos.coords.longitude);
           setWeather(data);
-          setLocation(`${data.location.name}`);
+          setLocation(data.location.name);
         } catch (err) {
           setError(err.message);
         } finally {
@@ -56,8 +58,8 @@ export default function App() {
       (geoError) => {
         setLoading(false);
         const messages = {
-          1: 'Location permission denied. Please allow access or enter a location manually.',
-          2: 'Unable to determine your position. Try entering a location instead.',
+          1: 'Location permission denied. Allow access or enter a city manually.',
+          2: 'Unable to determine your position. Try entering a location.',
           3: 'Location request timed out. Please try again.',
         };
         setError(messages[geoError.code] || 'Failed to get your location.');
@@ -67,40 +69,62 @@ export default function App() {
   };
 
   return (
-    <div className="app">
-      <Header />
+    <div className="app-viewport">
+      <div className="phone-frame">
+        <AppShell />
 
-      <main className="main-content">
-        <SearchBar
-          location={location}
-          onLocationChange={setLocation}
-          onSearch={handleSearch}
-          onUseMyLocation={handleUseMyLocation}
-          loading={loading}
-        />
+        <main className="app-screen">
+          {tab === 'home' && (
+            <div className="screen-content screen-home">
+              <SearchBar
+                location={location}
+                onLocationChange={setLocation}
+                onSearch={handleSearch}
+                onUseMyLocation={handleUseMyLocation}
+                loading={loading}
+              />
 
-        <ErrorAlert error={error} onDismiss={() => setError(null)} />
+              <ErrorAlert error={error} onDismiss={() => setError(null)} />
 
-        {loading && (
-          <div className="loading-state" role="status">
-            <div className="spinner" aria-hidden="true" />
-            <p>Fetching weather data…</p>
-          </div>
-        )}
+              {loading && (
+                <div className="loading-state" role="status">
+                  <div className="spinner" aria-hidden="true" />
+                  <p>Loading weather…</p>
+                </div>
+              )}
 
-        {weather && !loading && (
-          <div className="weather-grid">
-            <CurrentWeather data={weather} />
-            <Forecast forecast={weather.forecast} />
-            <MapEmbed map={weather.map} />
-          </div>
-        )}
+              {!loading && !weather && !error && (
+                <div className="empty-home">
+                  <span className="empty-icon" aria-hidden="true">🌤️</span>
+                  <p>Search a city or use your location to get started.</p>
+                </div>
+              )}
 
-        <RecordsPanel />
-        <AboutSection />
-      </main>
+              {weather && !loading && (
+                <>
+                  <CurrentWeather data={weather} />
+                  <Forecast forecast={weather.forecast} />
+                  <MapEmbed map={weather.map} />
+                </>
+              )}
+            </div>
+          )}
 
-      <Footer />
+          {tab === 'saved' && (
+            <div className="screen-content">
+              <RecordsPanel />
+            </div>
+          )}
+
+          {tab === 'about' && (
+            <div className="screen-content">
+              <AboutSection />
+            </div>
+          )}
+        </main>
+
+        <BottomNav active={tab} onChange={setTab} />
+      </div>
     </div>
   );
 }

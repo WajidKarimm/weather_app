@@ -3,3 +3,8 @@ dist/
 .env
 *.db
 data/
+
+# Python (optional local tooling)
+__pycache__/
+.venv/
+venv/

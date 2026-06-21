@@ -20,9 +20,36 @@ npm install
 npm run dev
 ```
 
-Open **http://localhost:5173**
+Open **http://localhost:5173** (development) or run production locally:
+
+```bash
+npm run build
+npm start
+# Open http://localhost:3001
+```
 
 Optional: copy `backend/.env.example` → `backend/.env` and add `YOUTUBE_API_KEY` for embedded YouTube results.
+
+---
+
+## Deploy (Render — Free)
+
+The app deploys as **one service**: Express serves the API and the built React frontend.
+
+1. Push this repo to GitHub (already at [WajidKarimm/weather_app](https://github.com/WajidKarimm/weather_app))
+2. Sign up at [render.com](https://render.com) and connect GitHub
+3. **New → Blueprint** (or Web Service) → select `weather_app` repo
+4. Render reads `render.yaml` automatically, or set manually:
+   - **Build command:** `npm run build`
+   - **Start command:** `npm start`
+   - **Health check path:** `/api/health`
+5. Deploy — your live URL will look like `https://weather-app-xxxx.onrender.com`
+
+Use that URL in your Google Form (**Weather app URL** field).
+
+> **Note:** Free tier SQLite data resets when the service redeploys or sleeps after inactivity (first load may take ~30s to wake up).
+
+Optional env var on Render: `YOUTUBE_API_KEY` for embedded YouTube videos.
 
 ---
 
@@ -99,7 +126,7 @@ For the Google Form submission:
 | Role | Fullstack |
 | GitHub repo | Your public repo URL |
 | Demo video | 1–2 min screen recording (code + app demo) |
-| Weather app URL | `Locally Hosted Only` |
+| Weather app URL | Your Render URL (e.g. `https://weather-app-xxxx.onrender.com`) |
 | Extra features | `I did basic + extra features` (5-day forecast, error handling, export formats) |
 
 ---
